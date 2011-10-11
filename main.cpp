@@ -258,10 +258,12 @@ void init()
 	allGeometry.clear();
 	for(int i = 0 ;i<numOfFile; i++)
 	{
-		geometry3D *pModel3d = new geometry3D(filePath + "vertical fusion\\vrml\\" + allFileNames[i] );
-		allGeometry.push_back(pModel3d);		
+		//geometry3D *pModel3d = new geometry3D(filePath + "vertical fusion\\vrml\\" + allFileNames[i] );
+		//allGeometry.push_back(pModel3d);		
 	}	
-	std::string verticesFileName, indicesFileName ;
+	std::string verticesFileName = "E:\\data\\bombData_cut\\vertical fusion\\vrml\\vertices.txt";
+	std::string indicesFileName = "E:\\data\\bombData_cut\\vertical fusion\\vrml\\indices.txt";	
+
 	geometry3D *object3DModel = new geometry3D( verticesFileName, indicesFileName);
 
 	allCamView.clear();

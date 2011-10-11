@@ -6,10 +6,36 @@
 geometry3D::geometry3D(std::string verticesFileName, std::string indicesFileName)
 {
 	// 
-	std::ifstream verticesIF(verticesFileName);
+	std::ifstream verticesIF(verticesFileName.c_str());
+	
+	verticesIF >> verticesNum ;
+	vertices = new float[3* verticesNum];
+	for( int i = 0; i< verticesNum; i++)
+	{		
+		verticesIF >> vertices[i*3] >> vertices[i*3 + 1] >> vertices[i*3+2];
+		//if (i == verticesNum -1)
+		//	std::cout << vertices[i*3] << vertices[i*3 + 1] << vertices[i*3+2]<< std::endl;
+	}
+	verticesIF.close();
 
+	std::ifstream indicesIF(indicesFileName.c_str());
+	indicesIF >> triangleNum;
+	indices = new unsigned int[3 * triangleNum];
+	for( int i = 0; i<triangleNum; i++)
+	{
+		indicesIF >> indices[i*3] >> indices[i*3 + 1] >> indices[i*3+2];
+		//if( i == triangleNum - 1)
+		//	std::cout << indices[i*3] << indices[i*3 + 1] << indices[i*3+2]<<std::endl;
+	}
+	indicesIF.close();
 
-	//unsigned int verticesFileName
+	calcDataRange();
+
+	modelMatrix = glm::mat4x4(1.0f,0.0f,0.0f,0.0f,
+							  0.0f,1.0f,0.0f,0.0f,
+							  0.0f,0.0f,1.0f,0.0f,
+							  0.0f,0.0f,0.0f,1.0f);
+	
 }
 
 
