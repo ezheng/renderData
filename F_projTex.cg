@@ -1,0 +1,161 @@
+
+void F_projTex(float4 texCoordProj0    : TEXCOORD0,  
+				float4 texCoordProj1 : TEXCOORD1,
+				float4 texCoordProj2 : TEXCOORD2, 
+				float4 texCoordProj3 : TEXCOORD3,               
+			
+			 float4 alpha0_3			: COLOR0 ,  
+             float4 alpha4_7			: COLOR1 , 
+               
+               out float4 color : COLOR,
+
+           uniform sampler2D imgTexture0 : TEXUNIT0,
+           uniform sampler2D imgTexture1 : TEXUNIT1,
+           uniform sampler2D imgTexture2 : TEXUNIT2,
+           uniform sampler2D imgTexture3 : TEXUNIT3,
+           uniform sampler2D shadowTexture0 : TEXUNIT4,
+           uniform sampler2D shadowTexture1 : TEXUNIT5,
+           uniform sampler2D shadowTexture2 : TEXUNIT6,
+           uniform sampler2D shadowTexture3 : TEXUNIT7)
+{
+	//float4 mTexCoordinateWdivide = texCoordProj / texCoordProj.w;
+	//float minDistanceFromCam = tex2D(shadowTexture0, mTexCoordinateWdivide.xy).z;
+	//float4 shadow0;
+	//
+	//if( minDistanceFromCam + 0.01  <= mTexCoordinateWdivide.z )
+	//{
+		//shadow0 = float4(0,0,0,1);		
+	//}
+	//else
+	//{
+		//shadow0 = float4(1,1,1,1);
+	//}			
+	//color = tex2Dproj(imgTexture0, texCoordProj.xyzw);	
+	//color =  shadow0 * color ;
+	
+//-----------------------------------------------------------------------------------	
+	
+	float4 mTexCoordinateWdivide0 = texCoordProj0 / texCoordProj0.w;
+	float minDistanceFromCam0 = tex2D(shadowTexture0, mTexCoordinateWdivide0.xy).z;	
+	float4 shadow0;	
+	if( minDistanceFromCam0  <= mTexCoordinateWdivide0.z || 
+			mTexCoordinateWdivide0.x<0 || mTexCoordinateWdivide0.x > 1 ||
+			mTexCoordinateWdivide0.y<0 || mTexCoordinateWdivide0.y > 1 ||
+			mTexCoordinateWdivide0.z<0 || mTexCoordinateWdivide0.z > 1)
+	{
+		shadow0 = float4(0,0,0,1);		// in the shadow
+		alpha0_3.x = 0;	
+	}
+	else
+	{
+		shadow0 = float4(1,1,1,1);
+	}	
+	float4 texColor0 = tex2Dproj(imgTexture0, texCoordProj0.xyzw);	
+	
+//-----------------------------------------------------------------------------------	
+	
+	float4 mTexCoordinateWdivide1 = texCoordProj1 / texCoordProj1.w;
+	float minDistanceFromCam1 = tex2D(shadowTexture1, mTexCoordinateWdivide1.xy).z;	
+	float4 shadow1;	
+	if( minDistanceFromCam1  <= mTexCoordinateWdivide1.z || 
+	mTexCoordinateWdivide1.x<0 || mTexCoordinateWdivide1.x > 1 ||
+	mTexCoordinateWdivide1.y<0 || mTexCoordinateWdivide1.y > 1 ||
+	mTexCoordinateWdivide1.z<0 || mTexCoordinateWdivide1.z > 1)
+	{
+		shadow1 = float4(0,0,0,1);		// in the shadow
+		alpha0_3.y = 0;	
+	}
+	else
+	{
+		shadow1 = float4(1,1,1,1);
+	}	
+	float4 texColor1 = tex2Dproj(imgTexture1, texCoordProj1.xyzw);	
+	
+//-----------------------------------------------------------------------------------	
+	
+	float4 mTexCoordinateWdivide2 = texCoordProj2 / texCoordProj2.w;
+	float minDistanceFromCam2 = tex2D(shadowTexture2, mTexCoordinateWdivide2.xy).z;	
+	float4 shadow2;	
+	if( minDistanceFromCam2   <= mTexCoordinateWdivide2.z || 
+	mTexCoordinateWdivide2.x<0 || mTexCoordinateWdivide2.x > 1 ||
+	mTexCoordinateWdivide2.y<0 || mTexCoordinateWdivide2.y > 1 ||
+	mTexCoordinateWdivide2.z<0 || mTexCoordinateWdivide2.z > 1)
+	{
+		shadow2 = float4(0,0,0,1);
+		alpha0_3.z = 0;
+	}
+	else
+	{
+		shadow2 = float4(1,1,1,1);
+	}
+	float4 texColor2 = tex2Dproj(imgTexture2, texCoordProj2.xyzw);
+	
+//------------------------------------------------------------------------------	
+	
+	float4 mTexCoordinateWdivide3 = texCoordProj3 / texCoordProj3.w;
+	float minDistanceFromCam3 = tex2D(shadowTexture3, mTexCoordinateWdivide3.xy).z;	
+	float4 shadow3;	
+	if( minDistanceFromCam3   <= mTexCoordinateWdivide3.z || 
+	mTexCoordinateWdivide3.x<0 || mTexCoordinateWdivide3.x > 1 ||
+	mTexCoordinateWdivide3.y<0 || mTexCoordinateWdivide3.y > 1 ||
+	mTexCoordinateWdivide3.z<0 || mTexCoordinateWdivide3.z > 1)
+	{
+		shadow3 = float4(0,0,0,1);
+		alpha0_3.w = 0;
+	}
+	else
+	{
+		shadow3 = float4(1,1,1,1);
+	}
+	float4 texColor3 = tex2Dproj(imgTexture3, texCoordProj3.xyzw);
+	
+	
+////-----------------------------------------------------------------------------	
+	
+	float maxAlpha = max(max(max(alpha0_3.x, alpha0_3.y),alpha0_3.z),alpha0_3.w);
+	float4 baseColor;
+	if (maxAlpha == alpha0_3.x)
+		baseColor = texColor0;
+	else if (maxAlpha == alpha0_3.y)
+		baseColor = texColor1;
+	else if (maxAlpha == alpha0_3.z)
+		baseColor = texColor2;
+	else if (maxAlpha == alpha0_3.w)
+		baseColor = texColor3;
+	//else
+		//baseColor = float4(1.0f,1.0f,1.0f,1.0f);
+		
+	float diffColor0 = distance(texColor0, baseColor );
+	float diffColor1 = distance(texColor1, baseColor );
+	float diffColor2 = distance(texColor2, baseColor );
+	float diffColor3 = distance(texColor3, baseColor );
+	
+	if (diffColor0 > 0.1)
+		alpha0_3.x = 0;
+	if (diffColor1 > 0.1)
+		alpha0_3.y = 0;
+	if (diffColor2 > 0.1)
+		alpha0_3.z = 0;
+	if (diffColor3 > 0.1)
+		alpha0_3.w = 0;
+		
+////-----------------------------------------------------------------------------
+
+	//
+	float normalizor = alpha0_3.x + alpha0_3.y + alpha0_3.z + alpha0_3.w;
+	if(normalizor == 0)
+	{
+		normalizor = normalizor + 0.000000001;
+	}
+	alpha0_3.x = alpha0_3.x / normalizor;
+	alpha0_3.y = alpha0_3.y / normalizor;
+	alpha0_3.z = alpha0_3.z / normalizor;
+	alpha0_3.w = alpha0_3.w / normalizor;
+	
+	color =  texColor0 * alpha0_3.x 
+		+ texColor1 * alpha0_3.y 
+		+ texColor2 * alpha0_3.z 
+		+ texColor3 * alpha0_3.w;	
+		
+	//	color = texColor1 * shadow1;		
+}   

@@ -1,0 +1,53 @@
+void V_projTex(float3 position : POSITION,                   
+       
+               out float4 oPosition     : POSITION,
+               out float4 texCoordProj0 : TEXCOORD0,
+               out float4 texCoordProj1	: TEXCOORD1,
+               out float4 texCoordProj2	: TEXCOORD2,
+               out float4 texCoordProj3 : TEXCOORD3,
+               	
+             out float4 alpha0_3			: COLOR0,  
+             out float4 alpha4_7			: COLOR1,
+                           
+                                 
+           uniform float4x4 textureMatrix0,
+           uniform float4x4 textureMatrix1,
+           uniform float4x4 textureMatrix2, 
+           uniform float4x4 textureMatrix3,          
+           uniform float3 sourceCamPos0,
+           uniform float3 sourceCamPos1,
+           uniform float3 sourceCamPos2,
+           uniform float3 sourceCamPos3,
+           
+           uniform float3 virCamPos,
+           uniform float4x4 modelViewProj)
+{	
+	
+	float4 homoPosition = float4(0,0,0,1);
+	homoPosition.xyz = position;	
+	oPosition = mul(modelViewProj, homoPosition);
+	
+	texCoordProj0 = mul(textureMatrix0, homoPosition);
+	texCoordProj1 = mul(textureMatrix1, homoPosition);  
+	texCoordProj2 = mul(textureMatrix2, homoPosition);
+	texCoordProj3 = mul(textureMatrix3, homoPosition);
+	
+	// calculate alpha value
+	float3 virCamShooting = normalize(position.xyz - virCamPos);
+	
+	float3 sourceCamShooting = normalize(position.xyz - sourceCamPos0);
+	alpha0_3.x = ((dot(virCamShooting, sourceCamShooting)) + 1) * 0.5;
+	//	
+	sourceCamShooting = normalize(position.xyz - sourceCamPos1);
+	alpha0_3.y = ((dot(virCamShooting, sourceCamShooting)) + 1) * 0.5;
+	//
+	sourceCamShooting = normalize(position.xyz - sourceCamPos2);
+	alpha0_3.z = ((dot(virCamShooting, sourceCamShooting)) + 1) * 0.5;
+	//
+	sourceCamShooting = normalize(position.xyz - sourceCamPos3);
+	alpha0_3.w = ((dot(virCamShooting, sourceCamShooting)) + 1) * 0.5;
+	
+	alpha4_7 = float4(1,1,1,1);
+	
+  
+}
