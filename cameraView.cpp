@@ -1,6 +1,7 @@
 #include "cameraView.h"
 #include <math.h>
 #include <glm\gtc\matrix_transform.hpp>
+#include <iostream>
 #define PI 3.1415926
 
 cameraView::cameraView(std::string imgFile, std::string camPosFile, std::string KFile)
@@ -17,13 +18,14 @@ cameraView::cameraView(std::string imgFile, std::string camPosFile, std::string 
 	K[1][0] = 0,	    K[1][1] = dataK[3], K[1][2] = 0;
 	K[2][0] = dataK[2],	K[2][1] = dataK[4],	K[2][2] = 1;
 
-	//read transformation info
+	//read camera pose info
 	std::ifstream in(camPosFile.c_str());
 	assert(in.is_open() == true);
-	float data[16];
-	for(unsigned int i = 0; i < 16; i++)
+	float data[12];
+	for(unsigned int i = 0; i < 12; i++)
 	{
 		in>>data[i];
+		std::cout << data[i] << " " << std::endl;
 	}
 	in.close();
 	R[0][0] = data[0], R[1][0] = data[1], R[2][0] = data[2];

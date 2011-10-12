@@ -23,9 +23,7 @@ geometry3D::geometry3D(std::string verticesFileName, std::string indicesFileName
 	indices = new unsigned int[3 * triangleNum];
 	for( int i = 0; i<triangleNum; i++)
 	{
-		indicesIF >> indices[i*3] >> indices[i*3 + 1] >> indices[i*3+2];
-		//if( i == triangleNum - 1)
-		//	std::cout << indices[i*3] << indices[i*3 + 1] << indices[i*3+2]<<std::endl;
+		indicesIF >> indices[i*3] >> indices[i*3 + 1] >> indices[i*3+2];		
 	}
 	indicesIF.close();
 
@@ -38,59 +36,6 @@ geometry3D::geometry3D(std::string verticesFileName, std::string indicesFileName
 	
 }
 
-
-geometry3D::geometry3D(std::string filename)
-{
-	// read vertices
-	std::ifstream in(filename.c_str(), std::ios_base::in);
-	assert(in.is_open());
-	in.ignore(BIGNUM, '[');
-	std::string t;
-	int lineCount=0;
-	getline(in, t, '\n');
-	std::streampos pos1 = in.tellg();		
-	while(getline(in, t, '\n') && (t.find(']')==std::string::npos))
-	{	
-		++lineCount;
-	}
-	vertices = new float[3*lineCount];
-	in.seekg(pos1);
-	for(int i = 0; i< 3*lineCount; i++)
-	{
-		in>>vertices[i];		
-	}		
-	verticesNum = lineCount;
-
-	// read indices
-	in.ignore(BIGNUM, '[');
-	getline(in,t,'\n');
-	pos1 = in.tellg();
-	lineCount = 0;
-	while(getline(in, t, '\n') && (t.find(']')==std::string::npos))
-		++lineCount;
-	triangleNum = lineCount * 2;
-	indices = new unsigned int[triangleNum * 3];
-	in.seekg(pos1);
-	for(int i = 0; i< lineCount; i++)
-	{
-		static int useless;
-		char uselessStr;		
-		in>>indices[6*i]>>uselessStr>>indices[6*i+1]>>uselessStr
-			>>indices[6*i+2]>>uselessStr>>indices[6*i+4]>>uselessStr
-			>>useless>>uselessStr;
-		assert(useless == -1);
-		indices[6*i+3] = indices[6*i+2];
-		indices[6*i+5] = indices[6*i];
-	}
-	in.close();
-
-	calcDataRange();
-
-	modelMatrix = glm::mat4x4(1.0f,0.0f,0.0f,0.0f,
-							  0.0f,1.0f,0.0f,0.0f,
-							  0.0f,0.0f,1.0f,0.0f,
-							  0.0f,0.0f,0.0f,1.0f);
-}
 
 void geometry3D::calcDataRange()
 {

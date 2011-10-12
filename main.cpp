@@ -13,7 +13,9 @@
 #include "checkforError.h" 
 #include <iostream>
 
-std::vector<geometry3D*> allGeometry;
+
+geometry3D *object3DModel; 
+//std::vector<geometry3D*> allGeometry;
 std::vector<cameraView*> allCamView;
 virtualView* virCam;
 
@@ -39,7 +41,7 @@ static const char *myVertexProgramFileName = "V_projTex.cg",
 				  *myVertexProgramName = "V_projTex",
                   *myFragmentProgramFileName = "F_projTex.cg",
 			      *myFragmentProgramName = "F_projTex";
-const std::string filePath = ".\\data_enrique\\";
+const std::string filePath = "E:\\data\\bombData_cut\\";
 void drawScene();
 void initializeCGShaders();
 float lastPos[2], lastAngle[2], angleUpDown = 0, angleLeftRight = 0;
@@ -115,12 +117,9 @@ void computeDepthMap(int idx)
 void drawScene()
 {		
 	glEnableClientState(GL_VERTEX_ARRAY);	
-	for(int i = 0; i<numOfFile; i++)
-	{
-		glVertexPointer(3, GL_FLOAT, 3 * sizeof(GLfloat), allGeometry[i]->vertices);	
-		glDrawElements(GL_TRIANGLES, allGeometry[i]->triangleNum*3, GL_UNSIGNED_INT, 
-		(unsigned int*)allGeometry[i]->indices);
-	}	
+	glVertexPointer(3, GL_FLOAT, 3 * sizeof(GLfloat), object3DModel->vertices);
+	glDrawElements(GL_TRIANGLES, object3DModel->triangleNum*3, GL_UNSIGNED_INT, 
+		(unsigned int*)(object3DModel->indices));
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 void display()
@@ -234,37 +233,13 @@ void init()
 	glEnable(GL_DEPTH_TEST);		
 	
 	// initialize the geometry and image information
-	std::string allFileNames[numOfFile] =  { "submodel-horz-0-00548.wrl",
-								"submodel-horz-1-00548.wrl",
-								"submodel-horz-2-00548.wrl",
-								"submodel-vert-0-00548.wrl",
-								"submodel-vert-1-00548.wrl",
-								"submodel-vert-2-00548.wrl",
-								"submodel-vert-3-00548.wrl",
-								"submodel-vert-4-00548.wrl",
-								"submodel-vert-5-00548.wrl",
-								"submodel-vert-6-00548.wrl",
-								"submodel-vert-7-00548.wrl",
-								"submodel-vert-8-00548.wrl",
-								"submodel-vert-9-00548.wrl",
-								"submodel-vert-10-00548.wrl",
-								"submodel-vert-11-00548.wrl",
-								"submodel-vert-12-00548.wrl",
-								"submodel-vert-13-00548.wrl",
-								"submodel-vert-14-00548.wrl"};
-
 	
-	int allImageIndices[numOfCams] = {1361,964,643,922};
-	allGeometry.clear();
-	for(int i = 0 ;i<numOfFile; i++)
-	{
-		//geometry3D *pModel3d = new geometry3D(filePath + "vertical fusion\\vrml\\" + allFileNames[i] );
-		//allGeometry.push_back(pModel3d);		
-	}	
-	std::string verticesFileName = "E:\\data\\bombData_cut\\vertical fusion\\vrml\\vertices.txt";
-	std::string indicesFileName = "E:\\data\\bombData_cut\\vertical fusion\\vrml\\indices.txt";	
+	int allImageIndices[numOfCams] = {288,457,698,795};
+	//int allImageIndices[numOfCams] = {656, 796, 895, 1201 };
+	std::string verticesFileName = filePath + "vertical fusion\\vrml\\vertices.txt";
+	std::string indicesFileName =  filePath + "vertical fusion\\vrml\\indices.txt";
 
-	geometry3D *object3DModel = new geometry3D( verticesFileName, indicesFileName);
+	object3DModel = new geometry3D( verticesFileName, indicesFileName);
 
 	allCamView.clear();
 	for(int i = 0; i<numOfCams; i++)
@@ -394,7 +369,7 @@ void initializeCGShaders()
 
 void moveMeFlat(int dir) 
 {
-	virCam->updateModelViewProjMatrix(dir, allGeometry[0]->dataRange.center);	
+	virCam->updateModelViewProjMatrix(dir, object3DModel->dataRange.center);	
 }
 
 void mouse(int button, int state, int x, int y)
@@ -429,7 +404,7 @@ void mouseTrack(int x, int y)
 
 	//update the model matrix
 	if(dx!=0 || dy!=0)
-	{virCam->updateModelViewProjMatrix(angleUpDown, angleLeftRight, allGeometry[0]->dataRange.center);
+	{virCam->updateModelViewProjMatrix(angleUpDown, angleLeftRight, object3DModel->dataRange.center);
 	glutPostRedisplay();
 	}
 
@@ -452,9 +427,9 @@ void inputKey(int key, int x, int y)
 void keyboard(unsigned char key,int x, int y)
 {
 	if(key == 'b' || key == 'B')	//enlarge the scene
-		virCam->updateModelViewProjMatrix(allGeometry[0]->dataRange.center, 1);
+		virCam->updateModelViewProjMatrix(object3DModel->dataRange.center, 1);
 	else if (key == 's' || key == 'S')
-		virCam->updateModelViewProjMatrix(allGeometry[0]->dataRange.center, 0);
+		virCam->updateModelViewProjMatrix(object3DModel->dataRange.center, 0);
 		
 	glutPostRedisplay();
 }
