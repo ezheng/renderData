@@ -7,7 +7,8 @@ geometry3D::geometry3D(std::string verticesFileName, std::string indicesFileName
 {
 	// 
 	std::ifstream verticesIF(verticesFileName.c_str());
-	
+	assert(verticesIF.is_open());
+
 	verticesIF >> verticesNum ;
 	vertices = new float[3* verticesNum];
 	for( int i = 0; i< verticesNum; i++)

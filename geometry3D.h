@@ -6,7 +6,6 @@
 #include <math.h>
 #include <glm\glm.hpp>
 
-#define BIGNUM 1000000000
 
 class dataScape
 {

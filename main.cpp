@@ -4,7 +4,7 @@
 #include <math.h>
 #include <vector>
 #include "globalFunc.h"
-#include <gl\glut.h>
+#include <gl\freeglut.h>
 #include <gl\gl.h>
 #include <cg\cg.h>
 #include <cg\cggl.h>
@@ -15,7 +15,6 @@
 
 
 geometry3D *object3DModel; 
-//std::vector<geometry3D*> allGeometry;
 std::vector<cameraView*> allCamView;
 virtualView* virCam;
 
@@ -41,7 +40,8 @@ static const char *myVertexProgramFileName = "V_projTex.cg",
 				  *myVertexProgramName = "V_projTex",
                   *myFragmentProgramFileName = "F_projTex.cg",
 			      *myFragmentProgramName = "F_projTex";
-const std::string filePath = "E:\\data\\bombData_cut\\";
+//const std::string filePath = "E:\\data\\database_moreimage_cut\\";
+const std::string filePath = "E:\\data\\database-7vk4w7x7\\";
 void drawScene();
 void initializeCGShaders();
 float lastPos[2], lastAngle[2], angleUpDown = 0, angleLeftRight = 0;
@@ -226,15 +226,15 @@ void init()
 	glColor3f(1.0,1.0,1.0);
 	glClearDepth(1.0f);
 	//glDepthFunc(GL_LEQUAL);
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_DEPTH_TEST);		
 	
 	// initialize the geometry and image information
-	
-	int allImageIndices[numOfCams] = {288,457,698,795};
+	//int allImageIndices[numOfCams] = {956,652,700,722};
+	int allImageIndices[numOfCams] = {476,540,1326,400};
 	//int allImageIndices[numOfCams] = {656, 796, 895, 1201 };
 	std::string verticesFileName = filePath + "vertical fusion\\vrml\\vertices.txt";
 	std::string indicesFileName =  filePath + "vertical fusion\\vrml\\indices.txt";
@@ -247,12 +247,14 @@ void init()
 		char fileNum[9];
 		sprintf(fileNum, "%.8d", allImageIndices[i]);
 		cameraView *pCamView = new cameraView(
-			filePath + "database\\cam-side\\undistorted\\undistorted" + fileNum + ".jpg",
-		filePath + "database\\cam-side\\tracker3d\\camera" + fileNum + ".txt",
-		filePath + "database\\cam-side\\" + "K.txt");
+			filePath + "\\cam-side\\undistorted\\undistorted" + fileNum + ".jpg",
+		filePath + "\\cam-side\\tracker3d\\camera" + fileNum + ".txt",
+		filePath + "\\cam-side\\" + "K.txt");
 		allCamView.push_back(pCamView);
 	}
-	virCam = new virtualView(allCamView[0]);
+
+// Initialize virtual view
+	virCam = new virtualView(allCamView[2]);
 
 // ----------------------------------------------------------------------------------
 	//generate fbo	
@@ -282,10 +284,10 @@ void init()
 	}	
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	if(!initMultitexture())
+	/*if(!initMultitexture())
 	{
 		std::cout<<"cannot use multiple texutre"<<std::endl;
-	}
+	}*/
 
 	// set up shaders
 	initializeCGShaders();
@@ -369,7 +371,7 @@ void initializeCGShaders()
 
 void moveMeFlat(int dir) 
 {
-	virCam->updateModelViewProjMatrix(dir, object3DModel->dataRange.center);	
+	virCam->updaetModelViewProjMatrix(dir, object3DModel->dataRange.center);	
 }
 
 void mouse(int button, int state, int x, int y)
@@ -461,4 +463,3 @@ int main(int argc, char** argv)
 	return 0;
 }
 	
-

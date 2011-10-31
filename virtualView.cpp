@@ -1,6 +1,43 @@
 #include "virtualView.h"
 #include <glm\gtc\matrix_transform.hpp>
 
+
+virtualView::virtualView(cameraView *cam, geometry3D *objModel)
+{
+	//---------------------------------------------------
+	objCenterPos = objModel->dataRange.center;
+	optCenterPos = cam->optCenterPos;
+	lookAtPos = objCenterPos;		// the lookat position is different from cam->lookAtPos.
+	upDir = cam->upDir;
+	K = cam->K;
+
+	//_____________________________________
+	imgWidth = cam->imgWidth, imgHeight = cam->imgHeight;
+	if(imgWidth > 1224 || imgHeight>1024)
+		imgWidth /= 2, imgHeight /= 2;	
+	//______________________________________
+	updataMatrix();		// reculate all the projection matrix.
+
+
+}
+
+void virtualView::updataMatrix()
+{
+	modelViewMatrix = glm::lookAt(optCenterPos,lookAtPos, upDir);
+	rowMajoredModelViewMatrix = glm::transpose(modelViewMatrix);
+	
+	float near1 = 0.1f;  float far1 = 100.0;
+	float bottom = -( ((float)imgHeight  - K[2][1])/K[1][1] ) * near1 ;
+	float top    = ( K[2][1]/K[1][1] ) * near1 ;
+	float left   = -( K[2][0]/K[0][0] ) * near1 ;
+	float right	 = ( ((float)imgWidth - K[2][0])/K[0][0] ) * near1 ;
+	projMatrix = glm::frustum(left,right,bottom,top,near1,far1);
+
+	rowMajoredProjMatrix = glm::transpose(projMatrix);
+	modelViewProjMatrix = projMatrix*modelViewMatrix;
+	rowMajoredModelViewProjMatrix = glm::transpose(modelViewProjMatrix);
+}
+
 virtualView::virtualView(cameraView* cam)
 {
 	/*modelViewMatrix = cam->modelViewMatrix;
@@ -26,7 +63,7 @@ virtualView::virtualView(cameraView* cam)
 	fov = cam->fov;
 
 
-	float near1 = 0.1f;  float far1 = 200.0;
+	float near1 = 0.1f;  float far1 = 100.0;
 	float bottom = -( ((float)imgHeight  - K[2][1])/K[1][1] ) * near1 ;
 	float top    = ( K[2][1]/K[1][1] ) * near1 ;
 	float left   = -( K[2][0]/K[0][0] ) * near1 ;
@@ -131,7 +168,7 @@ void virtualView::updateModelViewProjMatrix(glm::vec3 objectCenter, int isEnlarg
 	
 	glm::mat4 newTransform(1.0f);
 	glm::mat4 newTransformOptCenterPos(1.0f);
-	float scale = 1.5f;
+	float scale = 1.1f;
 	if(isEnlarge)
 	{
 		newTransform = glm::scale(newTransform, glm::vec3(scale));

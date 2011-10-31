@@ -29,6 +29,11 @@ private:
 	void setModelViewMatrix();
 	void setTextureMatrix();	
 	void getCenteredImage();
+
+	
+	
+
+
 	IplImage* origImg;
 
 public:
