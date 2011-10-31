@@ -6,6 +6,7 @@
 geometry3D::geometry3D(std::string verticesFileName, std::string indicesFileName)
 {
 	// 
+	std::cout<< "start reading 3D model Data" << std::endl;
 	std::ifstream verticesIF(verticesFileName.c_str());
 	assert(verticesIF.is_open());
 
@@ -14,8 +15,6 @@ geometry3D::geometry3D(std::string verticesFileName, std::string indicesFileName
 	for( int i = 0; i< verticesNum; i++)
 	{		
 		verticesIF >> vertices[i*3] >> vertices[i*3 + 1] >> vertices[i*3+2];
-		//if (i == verticesNum -1)
-		//	std::cout << vertices[i*3] << vertices[i*3 + 1] << vertices[i*3+2]<< std::endl;
 	}
 	verticesIF.close();
 
@@ -35,6 +34,7 @@ geometry3D::geometry3D(std::string verticesFileName, std::string indicesFileName
 							  0.0f,0.0f,1.0f,0.0f,
 							  0.0f,0.0f,0.0f,1.0f);
 	
+	std::cout<< "finish reading 3D data" << std::endl;
 }
 
 

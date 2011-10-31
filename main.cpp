@@ -195,7 +195,7 @@ void display()
 		cgGLEnableTextureParameter(V_shadowTexture[i]);
 		checkForCgError("enable shadow texture");
 	}
-    glViewport(0,0,virtualCamWidth, virtualCamHeight);
+    glViewport(0,0,virCam->imgWidth/2, virCam->imgHeight/2);
 	//glEnable(GL_CULL_FACE);
 	drawScene();
 	//glFinish();
@@ -218,29 +218,13 @@ void display()
 	glDisable(GL_DEPTH_TEST);
 }
 
-void init()
-{
-		// init glew functions
-	init_glew_and_check_gl_version();	
-
-	glColor3f(1.0,1.0,1.0);
-	glClearDepth(1.0f);
-	//glDepthFunc(GL_LEQUAL);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_DEPTH_TEST);		
-	
-	// initialize the geometry and image information
-	//int allImageIndices[numOfCams] = {956,652,700,722};
-	int allImageIndices[numOfCams] = {476,540,1326,400};
-	//int allImageIndices[numOfCams] = {656, 796, 895, 1201 };
+void initCameras()
+{	
+	// initialize the geometry and image information	
+	int allImageIndices[numOfCams] = {476,540,1326,400};	
 	std::string verticesFileName = filePath + "vertical fusion\\vrml\\vertices.txt";
 	std::string indicesFileName =  filePath + "vertical fusion\\vrml\\indices.txt";
-
 	object3DModel = new geometry3D( verticesFileName, indicesFileName);
-
 	allCamView.clear();
 	for(int i = 0; i<numOfCams; i++)
 	{
@@ -252,10 +236,23 @@ void init()
 		filePath + "\\cam-side\\" + "K.txt");
 		allCamView.push_back(pCamView);
 	}
-
 // Initialize virtual view
 	virCam = new virtualView(allCamView[2]);
+}
 
+void init()
+{
+		// init glew functions
+	init_glew_and_check_gl_version();		
+	
+	glColor3f(1.0,1.0,1.0);
+	glClearDepth(1.0f);
+	//glDepthFunc(GL_LEQUAL);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
 // ----------------------------------------------------------------------------------
 	//generate fbo	
 	for(int i = 0 ; i<numOfCams; i++)
@@ -371,73 +368,34 @@ void initializeCGShaders()
 
 void moveMeFlat(int dir) 
 {
-	virCam->updaetModelViewProjMatrix(dir, object3DModel->dataRange.center);	
+	
 }
 
 void mouse(int button, int state, int x, int y)
 {
-	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{
-		lastPos[0] = x;
-		lastPos[1] = y;		
-	}	
+	
 	
 }
 
 void mouseTrack(int x, int y)
 {
-	
-	// get the new angle and position
-	int dx = x - lastPos[0];
-	int dy = y - lastPos[1];
-	angleUpDown = /*lastAngle[0] +*/ (float(dy) * 10 * virCam->fov / virtualCamHeight);
-	angleLeftRight = /*lastAngle[1] +*/ (float(dx) * 10 * virCam->fov / virtualCamHeight);
-	//angleUpDown = float(dy) * 1.8 * virCam->fov / virtualCamHeight;
-	//angleLeftRight = (float(dx) * 1.8 * virCam->fov / virtualCamHeight);
-
-	if(angleLeftRight >= 180)
-	angleLeftRight -= 360;
-	if(angleLeftRight <= -180)
-	angleLeftRight += 360;
-	if(angleUpDown <= -180)
-	angleUpDown += 360;
-	if(angleUpDown >= 180)
-	angleUpDown -= 360;
-
-	//update the model matrix
-	if(dx!=0 || dy!=0)
-	{virCam->updateModelViewProjMatrix(angleUpDown, angleLeftRight, object3DModel->dataRange.center);
-	glutPostRedisplay();
-	}
-
-	lastPos[0] = x;
-	lastPos[1] = y;
-
 }
 void inputKey(int key, int x, int y) 
 {
-	switch (key) {
-		case GLUT_KEY_RIGHT : moveMeFlat(0);break;
-		case GLUT_KEY_UP : moveMeFlat(1);break;
-		case GLUT_KEY_LEFT : moveMeFlat(2); break;
-		case GLUT_KEY_DOWN : moveMeFlat(3); break;
-		default: break;
-	}
+	
 	glutPostRedisplay();
 }
 
 void keyboard(unsigned char key,int x, int y)
 {
-	if(key == 'b' || key == 'B')	//enlarge the scene
-		virCam->updateModelViewProjMatrix(object3DModel->dataRange.center, 1);
-	else if (key == 's' || key == 'S')
-		virCam->updateModelViewProjMatrix(object3DModel->dataRange.center, 0);
+	
 		
 	glutPostRedisplay();
 }
 
 int main(int argc, char** argv)
 {	
+	initCameras();
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(virtualCamWidth, virtualCamHeight); 

@@ -13,10 +13,6 @@ public:
 	// another new virtual view constructor
 	virtualView(cameraView *cam, geometry3D *objModel);
 
-	void updateModelViewProjMatrix(float angleUpDown, float angleLeftRight,  glm::vec3 objectCenter);
-	void updateModelViewProjMatrix(int sizeDir, glm::vec3 objectCenter);
-	void virtualView::updateModelViewProjMatrix(glm::vec3 objectCenter, int isEnlarge);
-
 public:	
 	glm::vec3 objCenterPos; // position of the object. This value should never be changed after initialization.
 

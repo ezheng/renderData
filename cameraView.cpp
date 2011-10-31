@@ -4,9 +4,13 @@
 #include <iostream>
 #define PI 3.1415926
 
+unsigned int cameraView::numOfCameras = 0;
+
 cameraView::cameraView(std::string imgFile, std::string camPosFile, std::string KFile)
 {
 	// read K(intrinsic parameter) 
+	std::cout<< "reading camera:"<< numOfCameras++ << std::endl;
+
 	std::ifstream inK(KFile.c_str());
 	assert(inK.is_open());
 	float dataK[5];
@@ -24,8 +28,7 @@ cameraView::cameraView(std::string imgFile, std::string camPosFile, std::string 
 	float data[12];
 	for(unsigned int i = 0; i < 12; i++)
 	{
-		in>>data[i];
-		std::cout << data[i] << " " << std::endl;
+		in>>data[i];		
 	}
 	in.close();
 	R[0][0] = data[0], R[1][0] = data[1], R[2][0] = data[2];

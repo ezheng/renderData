@@ -61,6 +61,8 @@ public:
 	glm::vec3 upDir;		
 	
 
+static unsigned int numOfCameras;
+
 };
 
 #endif
